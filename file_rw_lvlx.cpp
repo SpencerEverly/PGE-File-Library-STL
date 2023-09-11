@@ -337,6 +337,10 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
                     PGEX_UIntVal("BG", lvl_section.background)//Built-in background ID
                     PGEX_SIntVal("LT", lvl_section.lighting_value)//Lighting value
                     PGEX_StrVal("MF", lvl_section.music_file) //External music file path
+                    PGEX_StrVal("MF2", lvl_section.music_file2) //External music file path 2
+                    PGEX_StrVal("MF3", lvl_section.music_file3) //External music file path 3
+                    PGEX_StrVal("MF4", lvl_section.music_file4) //External music file path 4
+                    PGEX_StrVal("MF5", lvl_section.music_file5) //External music file path 5
                     PGEX_BoolVal("CS", lvl_section.wrap_h)//Connect sides horizontally
                     PGEX_BoolVal("CSV", lvl_section.wrap_v)//Connect sides vertically
                     PGEX_BoolVal("OE", lvl_section.OffScreenEn)//Offscreen exit
@@ -858,6 +862,42 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
 
                                 if(PGEFile::IsQoutedString(param[1]))
                                     sectionSet.music_file = PGEFile::X2STRING(param[1]);
+                                else
+                                    goto badfile;
+                            }
+                            else if(param[0] == "MF2")
+                            {
+                                errorString = "Invalid Section music file value type";
+
+                                if(PGEFile::IsQoutedString(param[1]))
+                                    sectionSet.music_file2 = PGEFile::X2STRING(param[1]);
+                                else
+                                    goto badfile;
+                            }
+                            else if(param[0] == "MF3")
+                            {
+                                errorString = "Invalid Section music file value type";
+
+                                if(PGEFile::IsQoutedString(param[1]))
+                                    sectionSet.music_file3 = PGEFile::X2STRING(param[1]);
+                                else
+                                    goto badfile;
+                            }
+                            else if(param[0] == "MF4")
+                            {
+                                errorString = "Invalid Section music file value type";
+
+                                if(PGEFile::IsQoutedString(param[1]))
+                                    sectionSet.music_file4 = PGEFile::X2STRING(param[1]);
+                                else
+                                    goto badfile;
+                            }
+                            else if(param[0] == "MF5")
+                            {
+                                errorString = "Invalid Section music file value type";
+
+                                if(PGEFile::IsQoutedString(param[1]))
+                                    sectionSet.music_file5 = PGEFile::X2STRING(param[1]);
                                 else
                                     goto badfile;
                             }
@@ -1697,6 +1737,10 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
             out << PGEFile::value("B", PGEFile::WriteInt(section.size_bottom));  // Bottom size
             out << PGEFile::value("MZ", PGEFile::WriteInt(section.music_id));  // Music ID
             out << PGEFile::value("MF", PGEFile::WriteStr(section.music_file));  // Music file
+            out << PGEFile::value("MF2", PGEFile::WriteStr(section.music_file));  // Music file 2
+            out << PGEFile::value("MF3", PGEFile::WriteStr(section.music_file));  // Music file 3
+            out << PGEFile::value("MF4", PGEFile::WriteStr(section.music_file));  // Music file 4
+            out << PGEFile::value("MF5", PGEFile::WriteStr(section.music_file));  // Music file 5
             out << PGEFile::value("BG", PGEFile::WriteInt(section.background));  // Background ID
             //out << PGEFile::value("BG", PGEFile::WriteStr(section.background_file));  // Background file
 
@@ -2270,6 +2314,30 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
                 if(!IsEmpty(x.music_file))
                 {
                     sectionSettings += PGEFile::value("MF", PGEFile::WriteStr(x.music_file));
+                    hasParams = true;
+                }
+                
+                if(!IsEmpty(x.music_file2))
+                {
+                    sectionSettings += PGEFile::value("MF2", PGEFile::WriteStr(x.music_file2));
+                    hasParams = true;
+                }
+                
+                if(!IsEmpty(x.music_file3))
+                {
+                    sectionSettings += PGEFile::value("MF3", PGEFile::WriteStr(x.music_file3));
+                    hasParams = true;
+                }
+                
+                if(!IsEmpty(x.music_file4))
+                {
+                    sectionSettings += PGEFile::value("MF4", PGEFile::WriteStr(x.music_file4));
+                    hasParams = true;
+                }
+                
+                if(!IsEmpty(x.music_file5))
+                {
+                    sectionSettings += PGEFile::value("MF5", PGEFile::WriteStr(x.music_file5));
                     hasParams = true;
                 }
 

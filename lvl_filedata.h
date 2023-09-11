@@ -95,6 +95,14 @@ struct LevelSection
     bool underwater = false;
     //! Custom music file which will be playd if music ID defined to "Custom" music id
     PGESTRING music_file;
+    //! Custom music file which will be playd if music ID defined to "Custom" music id 2
+    PGESTRING music_file2;
+    //! Custom music file which will be playd if music ID defined to "Custom" music id 3
+    PGESTRING music_file3;
+    //! Custom music file which will be playd if music ID defined to "Custom" music id 4
+    PGESTRING music_file4;
+    //! Custom music file which will be playd if music ID defined to "Custom" music id 5
+    PGESTRING music_file5;
 
     /*
      * Editor-only parameters which are not saving into file

@@ -37,6 +37,10 @@ private:
     VARIANT_BOOL m_noback;
     VARIANT_BOOL m_isunderwater;
     CComBSTR m_custom_music_file;
+    CComBSTR m_custom_music_file2;
+    CComBSTR m_custom_music_file3;
+    CComBSTR m_custom_music_file4;
+    CComBSTR m_custom_music_file5;
 
 public:
 	CPGELevelSection() :
@@ -53,6 +57,10 @@ public:
         m_noback(VARIANT_FALSE),
         m_isunderwater(VARIANT_FALSE),
         m_custom_music_file("")
+        m_custom_music_file2("")
+        m_custom_music_file3("")
+        m_custom_music_file4("")
+        m_custom_music_file5("")
 	{
 	}
 

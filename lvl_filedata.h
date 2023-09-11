@@ -637,6 +637,14 @@ struct LevelEvent_Sets
     long music_id = LESet_Nothing;
     //! Set new Custom Music File path
     PGESTRING music_file;
+    //! Set new Custom Music File path 2
+    PGESTRING music_file2;
+    //! Set new Custom Music File path 3
+    PGESTRING music_file3;
+    //! Set new Custom Music File path 4
+    PGESTRING music_file4;
+    //! Set new Custom Music File path 5
+    PGESTRING music_file5;
     //! Set new Background ID in this section (-1 - do nothing, -2 - reset to defaint, >=0 - set background ID)
     long background_id = LESet_Nothing;
 

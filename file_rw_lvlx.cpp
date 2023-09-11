@@ -336,6 +336,7 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
                     PGEX_UIntVal("MZ", lvl_section.music_id)//Built-in music ID
                     PGEX_UIntVal("BG", lvl_section.background)//Built-in background ID
                     PGEX_SIntVal("LT", lvl_section.lighting_value)//Lighting value
+                    PGEX_StrVal("MFSEC", lvl_section.music_file_section) //Which custom slot to use for a section
                     PGEX_StrVal("MF", lvl_section.music_file) //External music file path
                     PGEX_StrVal("MF2", lvl_section.music_file2) //External music file path 2
                     PGEX_StrVal("MF3", lvl_section.music_file3) //External music file path 3

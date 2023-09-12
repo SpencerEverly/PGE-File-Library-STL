@@ -1738,10 +1738,11 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
             out << PGEFile::value("B", PGEFile::WriteInt(section.size_bottom));  // Bottom size
             out << PGEFile::value("MZ", PGEFile::WriteInt(section.music_id));  // Music ID
             out << PGEFile::value("MF", PGEFile::WriteStr(section.music_file));  // Music file
-            out << PGEFile::value("MF2", PGEFile::WriteStr(section.music_file));  // Music file 2
-            out << PGEFile::value("MF3", PGEFile::WriteStr(section.music_file));  // Music file 3
-            out << PGEFile::value("MF4", PGEFile::WriteStr(section.music_file));  // Music file 4
-            out << PGEFile::value("MF5", PGEFile::WriteStr(section.music_file));  // Music file 5
+            out << PGEFile::value("MF2", PGEFile::WriteStr(section.music_file2));  // Music file 2
+            out << PGEFile::value("MF3", PGEFile::WriteStr(section.music_file3));  // Music file 3
+            out << PGEFile::value("MF4", PGEFile::WriteStr(section.music_file4));  // Music file 4
+            out << PGEFile::value("MF5", PGEFile::WriteStr(section.music_file5));  // Music file 5
+            out << PGEFile::value("MFSEC", PGEFile::WriteInt(music_file_section)); //Music file section
             out << PGEFile::value("BG", PGEFile::WriteInt(section.background));  // Background ID
             //out << PGEFile::value("BG", PGEFile::WriteStr(section.background_file));  // Background file
 

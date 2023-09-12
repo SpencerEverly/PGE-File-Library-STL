@@ -104,7 +104,7 @@ struct LevelSection
     //! Custom music file which will be playd if music ID defined to "Custom" music id 5
     PGESTRING music_file5;
     //! Custom music file section to use
-    int music_file_section = 1;
+    int music_file_section = 0;
 
     /*
      * Editor-only parameters which are not saving into file
@@ -648,7 +648,7 @@ struct LevelEvent_Sets
     //! Set new Custom Music File path 5
     PGESTRING music_file5;
     //! Custom music file section to use
-    int music_file_section = 1;
+    int music_file_section = 0;
     //! Set new Background ID in this section (-1 - do nothing, -2 - reset to defaint, >=0 - set background ID)
     long background_id = LESet_Nothing;
 

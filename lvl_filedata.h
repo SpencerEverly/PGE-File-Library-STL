@@ -1136,7 +1136,7 @@ struct LevelData
     bool layerIsExist(const PGESTRING &title);
     
     //! The quick death toggle, for LVLX files
-    unsigned int quickDeathToggle;
+    unsigned int quickDeathToggle = 0;
 };
 
 

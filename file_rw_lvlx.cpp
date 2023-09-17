@@ -162,6 +162,13 @@ bool FileFormats::ReadExtendedLvlFileHeaderT(PGE_FileFormats_misc::TextInput &in
                 else
                     goto bad_file;
             }
+            else if(val[0] == "QDTH") //Quick death toggle
+            {
+                if(PGEFile::IsIntU(val[1]))
+                    FileData.quickDeathToggle = toInt(val[1]);
+                else
+                    goto bad_file;
+            }
         }
     }
 
@@ -271,6 +278,7 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
                     PGEX_StrArrVal("NO", FileData.player_names_overrides) //Overrides of player names
                     PGEX_StrVal("XTRA", FileData.custom_params) //Level-wide Extra settings
                     PGEX_StrVal("CPID", FileData.meta.configPackId)//Config pack ID string
+                    PGEX_UIntVal("QDTH", FileData.quickDeathToggle) //Quick death toggle, 1 if true (Else if 0 or not existing it's false)
                 }
             }
         }//HEADER
@@ -1658,6 +1666,9 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
 
         if(!IsEmpty(FileData.meta.configPackId))
             outHeader += PGEFile::value("CPID", PGEFile::WriteStr(FileData.meta.configPackId));
+        
+        if(!IsEmpty(FileData.quickDeathToggle))
+            outHeader += PGEFile::value("QDTH", PGEFile::WriteInt(FileData.quickDeathToggle));
 
         if(!IsEmpty(outHeader))
             out << "HEAD\n" << outHeader << "\n" << "HEAD_END\n";

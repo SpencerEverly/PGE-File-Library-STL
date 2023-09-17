@@ -1667,7 +1667,7 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
         if(!IsEmpty(FileData.meta.configPackId))
             outHeader += PGEFile::value("CPID", PGEFile::WriteStr(FileData.meta.configPackId));
         
-        if(!IsEmpty(FileData.quickDeathToggle))
+        if(FileData.quickDeathToggle > 0)
             outHeader += PGEFile::value("QDTH", PGEFile::WriteInt(FileData.quickDeathToggle));
 
         if(!IsEmpty(outHeader))

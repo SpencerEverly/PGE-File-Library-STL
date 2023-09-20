@@ -162,10 +162,10 @@ bool FileFormats::ReadExtendedLvlFileHeaderT(PGE_FileFormats_misc::TextInput &in
                 else
                     goto bad_file;
             }
-            else if(val[0] == "QDTH") //Quick death toggle
+            else if(val[0] == "MUS") // Level-wide list of external music files
             {
-                if(PGEFile::IsIntU(val[1]))
-                    FileData.quickDeathToggle = toInt(val[1]);
+                if(PGEFile::IsStringArray(val[1]))
+                    FileData.music_files = PGEFile::X2STRArr(val[1]);
                 else
                     goto bad_file;
             }
@@ -278,7 +278,7 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
                     PGEX_StrArrVal("NO", FileData.player_names_overrides) //Overrides of player names
                     PGEX_StrVal("XTRA", FileData.custom_params) //Level-wide Extra settings
                     PGEX_StrVal("CPID", FileData.meta.configPackId)//Config pack ID string
-                    PGEX_UIntVal("QDTH", FileData.quickDeathToggle) //Quick death toggle, 1 if true (Else if 0 or not existing it's false)
+                    PGEX_StrArrVal("MUS", FileData.music_files)// Level-wide list of external music files
                 }
             }
         }//HEADER
@@ -346,10 +346,7 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
                     PGEX_SIntVal("LT", lvl_section.lighting_value)//Lighting value
                     PGEX_USIntVal("MFSEC", lvl_section.music_file_section) //Which custom slot to use for a section
                     PGEX_StrVal("MF", lvl_section.music_file) //External music file path
-                    PGEX_StrVal("MF2", lvl_section.music_file2) //External music file path 2
-                    PGEX_StrVal("MF3", lvl_section.music_file3) //External music file path 3
-                    PGEX_StrVal("MF4", lvl_section.music_file4) //External music file path 4
-                    PGEX_StrVal("MF5", lvl_section.music_file5) //External music file path 5
+                    PGEX_SIntVal("ME", lvl_section.music_file_idx) //External music entry from level list
                     PGEX_BoolVal("CS", lvl_section.wrap_h)//Connect sides horizontally
                     PGEX_BoolVal("CSV", lvl_section.wrap_v)//Connect sides vertically
                     PGEX_BoolVal("OE", lvl_section.OffScreenEn)//Offscreen exit
@@ -874,39 +871,12 @@ bool FileFormats::ReadExtendedLvlFile(PGE_FileFormats_misc::TextInput &in, Level
                                 else
                                     goto badfile;
                             }
-                            else if(param[0] == "MF2")
+                            else if(param[0] == "ME")
                             {
                                 errorString = "Invalid Section music file value type";
 
-                                if(PGEFile::IsQoutedString(param[1]))
-                                    sectionSet.music_file2 = PGEFile::X2STRING(param[1]);
-                                else
-                                    goto badfile;
-                            }
-                            else if(param[0] == "MF3")
-                            {
-                                errorString = "Invalid Section music file value type";
-
-                                if(PGEFile::IsQoutedString(param[1]))
-                                    sectionSet.music_file3 = PGEFile::X2STRING(param[1]);
-                                else
-                                    goto badfile;
-                            }
-                            else if(param[0] == "MF4")
-                            {
-                                errorString = "Invalid Section music file value type";
-
-                                if(PGEFile::IsQoutedString(param[1]))
-                                    sectionSet.music_file4 = PGEFile::X2STRING(param[1]);
-                                else
-                                    goto badfile;
-                            }
-                            else if(param[0] == "MF5")
-                            {
-                                errorString = "Invalid Section music file value type";
-
-                                if(PGEFile::IsQoutedString(param[1]))
-                                    sectionSet.music_file5 = PGEFile::X2STRING(param[1]);
+                                if(PGEFile::IsIntS(param[1]))
+                                    sectionSet.music_file_idx = toInt(param[1]);
                                 else
                                     goto badfile;
                             }
@@ -1670,6 +1640,9 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
         if(FileData.quickDeathToggle > 0)
             outHeader += PGEFile::value("QDTH", PGEFile::WriteInt(FileData.quickDeathToggle));
 
+        if(!IsEmpty(FileData.music_files))
+            outHeader += PGEFile::value("MUS", PGEFile::WriteStrArr(FileData.music_files));    // Overrides of player names
+
         if(!IsEmpty(outHeader))
             out << "HEAD\n" << outHeader << "\n" << "HEAD_END\n";
     }
@@ -1749,11 +1722,8 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
             out << PGEFile::value("B", PGEFile::WriteInt(section.size_bottom));  // Bottom size
             out << PGEFile::value("MZ", PGEFile::WriteInt(section.music_id));  // Music ID
             out << PGEFile::value("MF", PGEFile::WriteStr(section.music_file));  // Music file
-            out << PGEFile::value("MF2", PGEFile::WriteStr(section.music_file2));  // Music file 2
-            out << PGEFile::value("MF3", PGEFile::WriteStr(section.music_file3));  // Music file 3
-            out << PGEFile::value("MF4", PGEFile::WriteStr(section.music_file4));  // Music file 4
-            out << PGEFile::value("MF5", PGEFile::WriteStr(section.music_file5));  // Music file 5
-            out << PGEFile::value("MFSEC", PGEFile::WriteInt(section.music_file_section)); //Music file section
+            if(section.music_file_idx != -1)
+                out << PGEFile::value("ME", PGEFile::WriteInt(section.music_file_idx));  // Level-wide music entry
             out << PGEFile::value("BG", PGEFile::WriteInt(section.background));  // Background ID
             //out << PGEFile::value("BG", PGEFile::WriteStr(section.background_file));  // Background file
 
@@ -2351,6 +2321,12 @@ bool FileFormats::WriteExtendedLvlFile(PGE_FileFormats_misc::TextOutput &out, Le
                 if(!IsEmpty(x.music_file5))
                 {
                     sectionSettings += PGEFile::value("MF5", PGEFile::WriteStr(x.music_file5));
+                    hasParams = true;
+                }
+
+                if(x.music_file_idx != LevelEvent_Sets::LESet_Nothing)
+                {
+                    sectionSettings += PGEFile::value("ME", PGEFile::WriteInt(x.music_file_idx));
                     hasParams = true;
                 }
 

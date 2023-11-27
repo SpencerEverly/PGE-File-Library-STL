@@ -32,6 +32,14 @@
 #include "CSVUtils.h"
 
 
+static int s_smbx64_flags = FileFormats::F_SMBX64_NO_FLAGS;
+
+void FileFormats::SetSMBX64LvlFlags(int flags)
+{
+    s_smbx64_flags = flags;
+}
+
+
 //*********************************************************
 //****************READ FILE FORMAT*************************
 //*********************************************************
@@ -98,14 +106,16 @@ bool FileFormats::ReadSMBX64LvlFileHeaderT(PGE_FileFormats_misc::TextInput &inf,
             nextLineH();                                //Read second Line
             SMBX64::ReadUInt(&FileData.stars, line);    //Number of stars
         }
-        else FileData.stars = 0;
+        else
+            FileData.stars = 0;
 
         if(file_format >= 60)
         {
             nextLineH();   //Read third line
             SMBX64::ReadStr(&FileData.LevelName, line); //LevelTitle
         }
-        else FileData.LevelName = "";
+        else
+            FileData.LevelName.clear();
 
         FileData.CurSection = 0;
         FileData.playmusic = false;
@@ -142,7 +152,7 @@ bool FileFormats::ReadSMBX64LvlFileF(const PGESTRING &filePath, LevelData &FileD
     if(!file.open(filePath, false))
     {
         FileData.meta.ERROR_info = "Failed to open file for read";
-        FileData.meta.ERROR_linedata = "";
+        FileData.meta.ERROR_linedata.clear();
         FileData.meta.ERROR_linenum = -1;
         FileData.meta.ReadFileValid = false;
         return false;
@@ -158,7 +168,7 @@ bool FileFormats::ReadSMBX64LvlFileRaw(PGESTRING &rawdata, const PGESTRING &file
     if(!file.open(&rawdata, filePath))
     {
         FileData.meta.ERROR_info = "Failed to open raw string for read";
-        FileData.meta.ERROR_linedata = "";
+        FileData.meta.ERROR_linedata.clear();
         FileData.meta.ERROR_linenum = -1;
         FileData.meta.ReadFileValid = false;
         return false;
@@ -176,7 +186,7 @@ bool FileFormats::ReadSMBX64LvlFile(PGE_FileFormats_misc::TextInput &in, LevelDa
     CreateLevelData(FileData);
     FileData.meta.RecentFormat = LevelData::SMBX64;
     FileData.meta.RecentFormatVersion = 64;
-    FileData.LevelName = "";
+    FileData.LevelName.clear();
     FileData.stars = 0;
     FileData.CurSection = 0;
     FileData.playmusic = false;
@@ -339,41 +349,44 @@ bool FileFormats::ReadSMBX64LvlFile(PGE_FileFormats_misc::TextInput &in, LevelDa
             SMBX64::ReadUInt(&xnpcID, line); //Containing NPC id
             {
                 //Convert NPC-ID value from SMBX1/2 to SMBX64
-                switch(xnpcID)
+                if((s_smbx64_flags & F_SMBX64_KEEP_LEGACY_NPC_IN_BLOCK_CODES) == 0)
                 {
-                case 100:
-                    xnpcID = 1009;
-                    break;//Mushroom
+                    switch(xnpcID)
+                    {
+                    case 100:
+                        xnpcID = 1009;
+                        break;//Mushroom
 
-                case 101:
-                    xnpcID = 1001;
-                    break;//Goomba
+                    case 101:
+                        xnpcID = 1001;
+                        break;//Goomba
 
-                case 102:
-                    xnpcID = 1014;
-                    break;//Fire flower
+                    case 102:
+                        xnpcID = 1014;
+                        break;//Fire flower
 
-                case 103:
-                    xnpcID = 1034;
-                    break;//Super leaf
+                    case 103:
+                        xnpcID = 1034;
+                        break;//Super leaf
 
-                case 104:
-                    xnpcID = 1035;
-                    break;//Shoe
+                    case 104:
+                        xnpcID = 1035;
+                        break;//Shoe
 
-                case 105:
-                    xnpcID = 1095;
-                    break;//Green Yoshi
+                    case 105:
+                        xnpcID = 1095;
+                        break;//Green Yoshi
 
-                case 201:
-                    xnpcID = 1186;
-                    break;//Life mushroom
+                    case 201:
+                        xnpcID = 1186;
+                        break;//Life mushroom
 
-                default:
-                    break;
+                    default:
+                        break;
+                    }
                 }
 
-                //Convert NPC-ID value from SMBX64 into PGE format
+                // Convert NPC-ID value from SMBX64 into Moondust format
                 if(xnpcID != 0)
                 {
                     if(xnpcID > 1000)
@@ -1092,7 +1105,8 @@ bool FileFormats::WriteSMBX64LvlFile(PGE_FileFormats_misc::TextOutput &out, Leve
         if(npcID < 0)
         {
             npcID *= -1;
-            if(npcID > 99) npcID = 99;
+            if((s_smbx64_flags & F_SMBX64_KEEP_LEGACY_NPC_IN_BLOCK_CODES) == 0 && npcID > 99)
+                npcID = 99;
         }
         else if(npcID != 0)
         {
